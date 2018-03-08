@@ -1,4 +1,4 @@
-# coding: utf_8
+# -*- encoding: utf8 -*-
 def read(fileName) :
 	content = ""
 	with open( fileName, "r" ) as file :

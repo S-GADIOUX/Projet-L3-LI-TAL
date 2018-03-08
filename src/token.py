@@ -8,7 +8,7 @@ class token:
 			self.occurrence = 1
 		else :
 			self.occurrence = o
-		self.relation = []
+		self.relations = []
 
 	def __eq__(self, other):
 		return self.lexeme == other.lexeme
@@ -19,30 +19,28 @@ class token:
 		else :
 			self.occurrence +=n
 	
-	# construit l'ensemble des relations d'un token
-	def addRelation(self, relationTuple):
-		relat, lex, nb = relationTuple
+	def addRelation(self, relationsTuple):
+		relat, lex, nb = relationsTuple
 		tmp = 0
-		for i in self.relation :
+		for i in self.relations :
 			if (i[0] == relat) and (lex == i[1]) :
 				tmp = i[2]
-				self.relation.remove(i)
+				self.relations.remove(i)
 				break
-		self.relation.append((relat, lex, nb+tmp))
+		self.relations.append((relat, lex, nb+tmp))
 
-	# merge les relations identiques
 	def merge(self, other):
 		self.occurrence += other.occurrence
-		for j in other.relation :
+		for j in other.relations :
 			self.addRelation(j)
 
 	def __str__(self):
 		returN ="--------------------------------" + '\n'
-		returN += "Lexeme : " +  self.lexeme + '\n'
-		returN += "Nombre : " +  str(self.occurrence) + '\n'
-		returN += "Type Grammatical: " +  self.grammarClass + '\n'
+		returN += "Nom :" +  self.lexeme + '\n'
+		returN += "Nombre :" +  str(self.occurrence) + '\n'
+		returN += "Type :" +  self.grammarClass + '\n'
 		s = "\t"
-		for i in self.relation:
+		for i in self.relations:
 			s = s + str(i[0]) + "\t" + i[1].lexeme + "\t" + str(i[2]) + "\n\t"
-		returN += "Relations : " + s + '\n'
+		returN += "Arcs :" + s + '\n'
 		return returN
