@@ -4,42 +4,30 @@ import time
 import fileManager
 import treeCreator
 from thesaurus import thesaurus
-timeTest = [0]
-s = time.perf_counter()
-lignes = fileManager.read((sys.argv)[1])
-print('File ready')
-timeTest.append(time.perf_counter()-s)
-print(timeTest[-1])
 
-s = time.perf_counter()
-allTokens = treeCreator.tokenList(lignes)
-print('Tokens created')
-timeTest.append(time.perf_counter()-s)
-print(timeTest[-1])
+def timeTest( function, parameters ) :
+	start = time.perf_counter()
+	returnValue = function( parameters )
+	chrono = time.perf_counter()-start
+	print(function.__name__ +' : '+ str(chrono) + ' s')
+	return returnValue
 
-s = time.perf_counter()
-allLinkedToken = treeCreator.relationList(allTokens)
-print('Tokens linked')
-timeTest.append(time.perf_counter()-s)
-print(timeTest[-1])
+functions = [fileManager.read, treeCreator.tokenList, treeCreator.relationList, treeCreator.graphList]
 
-s = time.perf_counter()
-test = treeCreator.graphList(allLinkedToken)
-print('Tokens merged')
-timeTest.append(time.perf_counter()-s)
-print(timeTest[-1])
+def roll(functionList, firstArg):
+	arg = firstArg
+	for i in functionList:
+		tmp = timeTest(i,arg)
+		arg = tmp
+	return arg
 
-s = time.perf_counter()
+test = roll(functions, (sys.argv)[1])
+
 thesau = thesaurus(test)
 print('Thesaurus step 1 done')
-timeTest.append(time.perf_counter()-s)
-print(timeTest[-1])
 
-s = time.perf_counter()
 nou = thesau.classList(['V','VPP'])
 print('Thesaurus noun list done')
-timeTest.append(time.perf_counter()-s)
-print(timeTest[-1])
 
 def testCode():
 
@@ -62,8 +50,3 @@ def testCode():
 			"""
 		fileManager.write('tmp',s)
 		s=''
-
-s = time.perf_counter()
-testCode()
-timeTest.append(time.perf_counter()-s)
-print(timeTest[-1])

@@ -4,7 +4,7 @@ class thesaurus :
 	
 	def __init__(self, graph):
 		self.corpus = graph
-		self.total = self.totalRelations(graph)
+		self.total = totalRelations(graph)
 		
 	def totalRelations(self,graph) :
 		returN = 0
@@ -96,7 +96,12 @@ class thesaurus :
 		
 		return num/det
 
-
+def totalRelations(graph) :
+		returN = 0
+		for i in graph :
+			for j in i.relations :
+				returN += j[2]
+		return returN
 
 def f(lex1 = None, rel = None, lex2 = None) :
 	returN = 0
