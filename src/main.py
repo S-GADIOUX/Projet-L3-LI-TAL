@@ -14,14 +14,14 @@ def timeTest( function, parameters ) :
 
 functions = [fileManager.read, treeCreator.tokenList, treeCreator.relationList, treeCreator.graphList]
 
-def roll(functionList, firstArg):
+def reapply(functionList, firstArg):
 	arg = firstArg
 	for i in functionList:
 		tmp = timeTest(i,arg)
 		arg = tmp
 	return arg
 
-test = roll(functions, (sys.argv)[1])
+test = reapply(functions, (sys.argv)[1])
 
 thesau = thesaurus(test)
 print('Thesaurus step 1 done')
