@@ -9,7 +9,7 @@ def timeTest( function, parameters ) :
 	start = time.perf_counter()
 	returnValue = function( parameters )
 	chrono = time.perf_counter()-start
-	print(function.__name__ +' : '+ str(chrono) + ' s')
+	fileManager.write((sys.argv)[2], function.__name__ +' : '+ str(chrono) + ' s')
 	return returnValue
 
 functions = [fileManager.read, treeCreator.tokenList, treeCreator.relationList, treeCreator.graphList]
@@ -21,6 +21,7 @@ def reapply(functionList, firstArg):
 		arg = tmp
 	return arg
 
+fileManager.clean((sys.argv)[2])
 test = reapply(functions, (sys.argv)[1])
 
 thesau = thesaurus(test)
