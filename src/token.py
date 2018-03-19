@@ -9,6 +9,7 @@ class token:
 		else :
 			self.occurrence = o
 		self.relations = {}
+		self.nbRelation = 0
 		self.hash = self.generateHash()
 
 	def __eq__(self, other):
@@ -28,11 +29,11 @@ class token:
 			salt +=1
 		return hash
 	
-	def augment(self, n = None):
-		if n is None:
-			self.occurrence +=1
-		else :
-			self.occurrence +=n
+	# def augment(self, n = None):
+		# if n is None:
+			# self.occurrence +=1
+		# else :
+			# self.occurrence +=n
 	
 	def addRelation(self, lex, relat): 
 		if ( lex in self.relations ):
@@ -41,8 +42,11 @@ class token:
 					self.relations[lex][r]+= relat[r]
 				else :
 					self.relations[lex][r] = relat[r]
+				self.nbRelation += relat[r]
 		else :
 			self.relations[lex] = relat
+			for r in relat :
+				self.nbRelation += relat[r]
 
 	def merge(self, other):
 		self.occurrence += other.occurrence

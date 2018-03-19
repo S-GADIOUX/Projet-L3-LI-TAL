@@ -33,7 +33,7 @@ def testCode(thesau, nou):
 	print("Length : " + str(l))
 	t = (l*(l+1))/2
 	print('Final cost : ' +str(t))
-	f = 0.01
+	f = 1
 
 	s = ''
 	for i in range(l):
@@ -44,7 +44,7 @@ def testCode(thesau, nou):
 			z = (i*l+(j-i))/t
 			if (z*100>f):
 				print(z*100)
-				f+=0.01
+				f+=1
 			fileManager.write('tmp',s)
 			s=''
 

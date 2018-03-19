@@ -108,17 +108,14 @@ def f(lex1 = None, rel = None, lex2 = None) :
 	returN = 0
 	if lex1 is not None :
 		if rel is None :
-			for key in lex1.relations :
-				for rKey in lex1.relations[key]:
-					returN += lex1.relations[key][rKey]
+			return lex1.nbRelation
 		else :
 			for key in lex1.relations :
 				return lex1.relations[lex2][rel]
 	else :
 		for key in lex2.relations :
-				for rKey in lex2.relations[key]:
-					if (rKey == (0 - rel)) :
-						returN += lex2.relations[key][rKey]
+			if ((0 - rel) in lex2.relations[key]) :
+				returN += lex2.relations[key][(0 - rel)]
 	return returN
 
 def commomRelations(lex1, lex2):
