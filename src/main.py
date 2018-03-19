@@ -5,9 +5,9 @@ import fileManager
 import treeCreator
 from thesaurus import thesaurus
 
-def timeTest( function, parameters ) :
+def timeTest( function, *parameters ) :
 	start = time.perf_counter()
-	returnValue = function( parameters )
+	returnValue = function( *parameters )
 	chrono = time.perf_counter()-start
 	fileManager.write((sys.argv)[2], function.__name__ +' : '+ str(chrono) + ' s \n')
 	return returnValue
@@ -24,29 +24,28 @@ def reapply(functionList, firstArg):
 fileManager.clean((sys.argv)[2])
 thesau = reapply(functions, (sys.argv)[1])
 
-nou = thesau.classList(['V','VPP'])
-print('Thesaurus noun list done')
+nou = timeTest (thesau.classList, ['V','VPP']) 
 
 def testCode(thesau, nou):
 
 	fileManager.clean("tmp")
 	l = len(nou)
-	print(l)
+	print("Length : " + str(l))
 	t = (l*(l+1))/2
-	f = 1
+	print('Final cost : ' +str(t))
+	f = 0.01
 
 	s = ''
 	for i in range(l):
 		s+="####################\n"
 		for j in range(i+1,l):
 			s += nou[i].lexeme + " \t"+ nou[j].lexeme + " \t" + str(thesau.cosine(nou[i], nou[j], thesau.PMI)) +'\n'
-			"""
+			
 			z = (i*l+(j-i))/t
-			if (z*100>f*5):
+			if (z*100>f):
 				print(z*100)
-				f+=1
-			"""
-		fileManager.write('tmp',s)
-		s=''
+				f+=0.01
+			fileManager.write('tmp',s)
+			s=''
 
-testCode(thesau, nou)
+timeTest(testCode, thesau, nou)

@@ -41,32 +41,32 @@ class thesaurus :
 		detRight = 0
 		commom = commomRelations(lex1, lex2)
 		
-		for rel in commom :
-			l1 = wgt(lex1, rel[0], rel[1])
-			l2 = wgt(lex2, rel[0], rel[1])
-			# print(l1,l2)
+		for lKey in commom :
+			l1 = wgt(lex1, commom[lKey], lKey)
+			l2 = wgt(lex2, commom[lKey], lKey)
 			num += l1*l2
 		
-		for i in lex1.relations :
-			tmp = wgt(lex1, i[0], i[1])
-			detLeft += tmp*tmp
+		for lKey in lex1.relations :
+			for rKey in lex1.relations[lKey]:
+				tmp = wgt(lex1, rKey, lKey)
+				detLeft += tmp*tmp
 		
-		for i in lex2.relations :
-			tmp = wgt(lex2, i[0], i[1])
-			detRight += tmp*tmp
+		for lKey in lex2.relations :
+			for rKey in lex2.relations[lKey]:
+				tmp = wgt(lex2, rKey, lKey)
+				detRight += tmp*tmp
 		
 		det = math.sqrt(detLeft * detRight)
 		return ( num / det )
-	
+
 	def jaccard(self, lex1, lex2, wgt):
 		num = 0
 		det = 0
 		commom = commomRelations(lex1, lex2)
 		
-		for rel in commom :
-			l1 = wgt(lex1, rel[0], rel[1])
-			l2 = wgt(lex2, rel[0], rel[1])
-			# print(l1,l2)
+		for lKey in commom :
+			l1 = wgt(lex1, commom[lKey], lKey)
+			l2 = wgt(lex2, commom[lKey], lKey)
 			if (l1<l2):
 				num += l1
 				det += l2
@@ -75,25 +75,25 @@ class thesaurus :
 				det += l1
 		
 		return num/det
-	
+
 	def lin(self, lex1, lex2, wgt):
 		num = 0
 		det = 0
 		commom = commomRelations(lex1, lex2)
 		
-		for rel in commom :
-			l1 = wgt(lex1, rel[0], rel[1])
-			l2 = wgt(lex2, rel[0], rel[1])
+		for lKey in commom :
+			l1 = wgt(lex1, commom[lKey], lKey)
+			l2 = wgt(lex2, commom[lKey], lKey)
 			num += (l1+l2)
 		
-		for i in lex1.relations :
-			tmp = wgt(lex1, i[0], i[1])
-			det += tmp
-		
-		for i in lex2.relations :
-			tmp = wgt(lex2, i[0], i[1])
-			det += tmp
-		
+		for lKey in lex1.relations :
+			for rKey in lex1.relations[lKey]:
+				det += wgt(lex1, rKey, lKey)
+
+		for lKey in lex2.relations :
+			for rKey in lex2.relations[lKey]:
+				det += wgt(lex2, rKey, lKey)
+
 		return num/det
 
 def totalRelations(graph) :
@@ -108,23 +108,24 @@ def f(lex1 = None, rel = None, lex2 = None) :
 	returN = 0
 	if lex1 is not None :
 		if rel is None :
-			for i in lex1.relations :
-				returN += i[2]
+			for key in lex1.relations :
+				for rKey in lex1.relations[key]:
+					returN += lex1.relations[key][rKey]
 		else :
-			for i in lex1.relations :
-				if (i[0] == rel and i[1] == lex2 ) :
-					return i[2]
+			for key in lex1.relations :
+				return lex1.relations[lex2][rel]
 	else :
-		for i in lex2.relations :
-			if (i[0] == (0 - rel)) :
-				returN += i[2]
+		for key in lex2.relations :
+				for rKey in lex2.relations[key]:
+					if (rKey == (0 - rel)) :
+						returN += lex2.relations[key][rKey]
 	return returN
 
 def commomRelations(lex1, lex2):
-	returN = []
-	for lex in lex1.relations :
-		if ( l1 in lex2.relations ) :
-			for rel in lex1.relations[lex] :
-				if (rel in lex2.relations[lex]) :
-					returN.append(lex2.relations[lex][rel])
+	returN = {}
+	for key in lex1.relations :
+		if ( key in lex2.relations ) :
+			for rKey in lex1.relations[key] :
+				if (rKey in lex2.relations[key]) :
+					returN[key] = rKey 
 	return returN
