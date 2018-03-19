@@ -9,10 +9,10 @@ def timeTest( function, parameters ) :
 	start = time.perf_counter()
 	returnValue = function( parameters )
 	chrono = time.perf_counter()-start
-	fileManager.write((sys.argv)[2], function.__name__ +' : '+ str(chrono) + ' s')
+	fileManager.write((sys.argv)[2], function.__name__ +' : '+ str(chrono) + ' s \n')
 	return returnValue
 
-functions = [fileManager.read, treeCreator.tokenList, treeCreator.relationList, treeCreator.graphList]
+functions = [fileManager.read, treeCreator.tokenList, treeCreator.relationList, treeCreator.graphList, thesaurus]
 
 def reapply(functionList, firstArg):
 	arg = firstArg
@@ -22,15 +22,12 @@ def reapply(functionList, firstArg):
 	return arg
 
 fileManager.clean((sys.argv)[2])
-test = reapply(functions, (sys.argv)[1])
-
-thesau = thesaurus(test)
-print('Thesaurus step 1 done')
+thesau = reapply(functions, (sys.argv)[1])
 
 nou = thesau.classList(['V','VPP'])
 print('Thesaurus noun list done')
 
-def testCode():
+def testCode(thesau, nou):
 
 	fileManager.clean("tmp")
 	l = len(nou)
@@ -51,3 +48,5 @@ def testCode():
 			"""
 		fileManager.write('tmp',s)
 		s=''
+
+testCode(thesau, nou)

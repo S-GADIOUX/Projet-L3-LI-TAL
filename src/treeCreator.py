@@ -42,11 +42,11 @@ def relationList (lexemeList) :	#Creation de la liste de Token linked
 		token = lexemeList[i]	
 		#Calcul du noeud gauche
 		if ((token.lexeme != "STR")) :
-			token.addRelation((-1, lexemeList[i-1], 1 ))
+			token.addRelation( lexemeList[i-1], {-1 : 1 })
 
 		#Calcul du noeud droit
 		if ((token.lexeme != "END")) :
-			token.addRelation((1, lexemeList[i+1], 1 ))
+			token.addRelation(lexemeList[i+1], { 1 : 1 })
 
 		returN.append(token)
 			
@@ -57,7 +57,6 @@ def relationList (lexemeList) :	#Creation de la liste de Token linked
 
 def graphList (relationList) : #Supression des doublons
 	graphDic = {}
-	
 	for i in relationList:
 		lex = i.lexeme
 		if (lex in graphDic):

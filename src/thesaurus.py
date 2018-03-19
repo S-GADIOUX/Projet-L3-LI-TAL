@@ -98,9 +98,10 @@ class thesaurus :
 
 def totalRelations(graph) :
 		returN = 0
-		for i in graph :
-			for j in i.relations :
-				returN += j[2]
+		for tok in graph :
+			for lex in tok.relations :
+				for relKey in tok.relations[lex] :
+					returN += tok.relations[lex][relKey]
 		return returN
 
 def f(lex1 = None, rel = None, lex2 = None) :
@@ -121,9 +122,9 @@ def f(lex1 = None, rel = None, lex2 = None) :
 
 def commomRelations(lex1, lex2):
 	returN = []
-	for i in lex1.relations :
-		for j in lex2.relations :
-			if (i[0] == j[0] and i[1] == j[1]) :
-				returN.append(i)
-				break
+	for lex in lex1.relations :
+		if ( l1 in lex2.relations ) :
+			for rel in lex1.relations[lex] :
+				if (rel in lex2.relations[lex]) :
+					returN.append(lex2.relations[lex][rel])
 	return returN
