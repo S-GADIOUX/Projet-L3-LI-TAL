@@ -1,3 +1,4 @@
+
 # coding: utf_8
 def read(fileName) :
 	content = ""

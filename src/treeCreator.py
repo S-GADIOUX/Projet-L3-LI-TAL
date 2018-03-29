@@ -1,5 +1,5 @@
+# -*- coding: utf-8 -*-
 from token import token
-# -*- encoding: utf8 -*-
 
 def spliter(line):	#Extraction du lexeme et du type d'une ligne
 	if (line==''):
@@ -21,35 +21,27 @@ def tokenList(lines) :	#Creation de token non linké
 	return tokenList
 
 def relationList (lexemeList) :	#Creation de la liste de Token linké
-	returN = []
 	i = 0
 	imax = len(lexemeList)
 	while (i < imax):
-		token = lexemeList[i]	
+		token = lexemeList[i]
 		#Calcul du noeud gauche
 		if ((token.lexeme != "STR")) :
-			token.addRelation((-1, lexemeList[i-1], 1 ))
+			token.addRelation(lexemeList[i-1],{-1:1})
 
 		#Calcul du noeud droit
 		if ((token.lexeme != "END")) :
-			token.addRelation((1, lexemeList[i+1], 1 ))
-
-		returN.append(token)
-			
+			token.addRelation(lexemeList[i+1],{1:1})
 		i = i+1
-	return returN
+	return lexemeList
 
 
 def graphList (relationList) :
-	graphList = []
-	
+	graphList = {}
 	for i in relationList:
-		b =False
-		for j in graphList :
-			if (j == i) :
-				j.merge(i)
-				b = True
-				break
-		if not b :
-			graphList.append(i)
+		if i not in graphList:
+			graphList[i] = i
+		else:
+			graphList[i].merge(i)
 	return graphList
+

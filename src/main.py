@@ -1,20 +1,48 @@
+# -*- encoding: utf8 -*-
 import sys
 import time
 import fileManager
 import treeCreator
-# coding: utf_8
+from thesaurus import thesaurus
 
-# lit le corpus et le met dans un tableau ligne par ligne
-lignes = fileManager.read((sys.argv)[1])
+def timeTest( function, *parameters ) :
+	start = time.perf_counter()
+	returnValue = function( *parameters )
+	chrono = time.perf_counter()-start
+	fileManager.write((sys.argv)[2], function.__name__ +' : '+ str(chrono) + ' s \n')
+	return returnValue
 
-# construit un tableau du corpus tokenisé (liaisons pas encore traitées et doublons présents)
-allTokens = treeCreator.tokenList(lignes)
+functions = [fileManager.read, treeCreator.tokenList, treeCreator.relationList, treeCreator.graphList, thesaurus]
 
-# allTokens avec liaisons traitées et doublons present
-allLinkedToken = treeCreator.relationList(allTokens)
-	
-test = treeCreator.graphList(allLinkedToken)
+def reapply(functionList, firstArg):
+	arg = firstArg
+	for i in functionList:
+		tmp = timeTest(i,arg)
+		arg = tmp
+	return arg
 
-for i in test :
-	print(i)
-	time.sleep(0.5)
+fileManager.clean((sys.argv)[2])
+thesau = reapply(functions, (sys.argv)[1])
+
+nou = timeTest (thesau.classList, ['D'])
+
+def testCode(thesau, nou):
+
+	fileManager.clean("tmp")
+	l = len(nou)
+	print("Length : " + str(l))
+	t = (l*(l+1))/2
+	print('Final cost : ' +str(t))
+	f = 0
+
+	s = ''
+	for i in range(l):
+		s+="####################\n"
+		for j in range(i+1,l):
+			s += nou[i].lexeme + " \t"+ nou[j].lexeme + " \t" + str(thesau.cosine(nou[i], nou[j], thesau.PMI)) +'\n'
+			fileManager.write('tmp',s)
+			f+=1
+			s=''
+	print("Real cost :" + str(f))
+
+timeTest(testCode, thesau, nou)
