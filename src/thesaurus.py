@@ -4,15 +4,14 @@ class thesaurus :
 	
 	def __init__(self, graph):
 		self.corpus = graph
-		self.total = totalRelations(graph)
-		
-	def totalRelations(self,graph) :
-		returN = 0
-		for i in graph :
-			for j in i.relations :
-				returN += j[2]
-		return returN
+		self.thesWeight = self.thesRel()
 
+	def thesRel(self):
+		tW=0
+		for i in self.corpus:
+			tW += i.tokRelations
+		return tW
+  
 	def classList(self, clasS):
 		returN = []
 		for i in self.corpus :
@@ -20,109 +19,92 @@ class thesaurus :
 				returN.append(i)
 		return returN
 
+	def f(self,lex1 = None,rel = None,lex2 = None):
+		a = 0
+		if lex1 is None:
+			for tok in lex2.relations:
+				if (0-rel) in lex2.relations[tok]:
+					a += lex2.relations[tok][0-rel]
+			return a
+		else :
+			if rel is None:
+				return lex1.tokRelations
+			return lex1.relations[lex2][rel]
 
-	def p(self, lex1 = None, rel = None, lex2 = None):
-		return f(lex1, rel, lex2)/self.total
-
+	def p(self,lex1,rel,lex2):
+		return self.f(lex1,rel,lex2)/self.thesWeigth
 
 	def relFreq(self, lex1, rel, lex2) :
-		return f(lex1, rel, lex2)/f( lex1 = lex1 )
+		return self.f(lex1,rel,lex2)/lex1.tokRelations
 
-	def tTest(self, lex1, rel,lex2) :
-		return( self.p(lex1, rel, lex2) - self.p(rel = rel, lex2 = lex2) * self.p( lex1 = lex1 ) ) / math.sqrt( self.p( lex1, rel, lex2 ) / self.total )
+	def tTest(self, lex1, rel, lex2) :
+		a = self.p(lex1,rel,lex2)
+		b = self.p(None,rel,lex2)
+		c = self.p(lex1)
+		return (a-b*c)/math.sqrt(a/self.thesWeigth)
 
-	def PMI(self, lex1, rel,lex2) :
-		return math.log( f( lex1, rel, lex2 ) / ( f(rel = rel, lex2 = lex2) * f( lex1 = lex1 ) ) )
+	def PMI(self, lex1, rel, lex2) :
+		num = self.f(lex1,rel,lex2)
+		d1 = self.f(None,rel,lex2)
+		d2 = self.f(lex1)
+		return math.log(num/(d1*d2))
 
-
-	def cosine(self, lex1, lex2, wgt) :
+	def cosine(self, lex1 ,lex2, wgt):
 		num = 0
-		detLeft = 0
-		detRight = 0
-		commom = commomRelations(lex1, lex2)
-		
-		for lKey in commom :
-			l1 = wgt(lex1, commom[lKey], lKey)
-			l2 = wgt(lex2, commom[lKey], lKey)
-			num += l1*l2
-		
-		for lKey in lex1.relations :
-			for rKey in lex1.relations[lKey]:
-				tmp = wgt(lex1, rKey, lKey)
-				detLeft += tmp*tmp
-		
-		for lKey in lex2.relations :
-			for rKey in lex2.relations[lKey]:
-				tmp = wgt(lex2, rKey, lKey)
-				detRight += tmp*tmp
-		
-		det = math.sqrt(detLeft * detRight)
-		return ( num / det )
-
-	def jaccard(self, lex1, lex2, wgt):
-		num = 0
-		det = 0
-		commom = commomRelations(lex1, lex2)
-		
-		for lKey in commom :
-			l1 = wgt(lex1, commom[lKey], lKey)
-			l2 = wgt(lex2, commom[lKey], lKey)
-			if (l1<l2):
-				num += l1
-				det += l2
-			else :
-				num += l2
-				det += l1
-		
+		d1 = 0
+		d2 = 0
+		common = commonRelations(lex1,lex2)
+		for tok in common:
+			for rel in common[tok]:
+				num += wgt(lex1,rel,tok)*wgt(lex2,rel,tok)
+		for tok in lex1.relations:
+			for rel in lex1.relations[tok]:
+				tmp = wgt(lex1,rel,tok)
+				d1 += tmp*tmp
+		for tok in lex2.relations:
+			for rel in lex2.relations[tok]:
+				tmp = wgt(lex2,rel,tok)
+				d2 += tmp*tmp
+		det = math.sqrt(d1*d2)
 		return num/det
 
-	def lin(self, lex1, lex2, wgt):
+	def jaccard(self,lex1,lex2,wgt):
 		num = 0
 		det = 0
-		commom = commomRelations(lex1, lex2)
-		
-		for lKey in commom :
-			l1 = wgt(lex1, commom[lKey], lKey)
-			l2 = wgt(lex2, commom[lKey], lKey)
-			num += (l1+l2)
-		
-		for lKey in lex1.relations :
-			for rKey in lex1.relations[lKey]:
-				det += wgt(lex1, rKey, lKey)
+		common = commonRelations(lex1,lex2)
+		for tok in common:
+			for rel in common[tok]:
+				l1 = wgt(lex1,rel,tok)
+				l2 = wgt(lex2,rel,tok)
+				if (l1<l2):
+					num += l1
+					det += l2
+				else:
+					num += l2
+					det += l1
+		return num / det
 
-		for lKey in lex2.relations :
-			for rKey in lex2.relations[lKey]:
-				det += wgt(lex2, rKey, lKey)
-
+	def lin(self,lex1,lex2,wgt):
+		num = 0
+		det = 0
+		common = commonRelations(lex1,lex2)
+		for tok in common:
+			for rel in common[tok]:
+				num += wgt(lex1,rel,tok)+wgt(lex2,rel,tok)
+		for tok in lex1.relations:
+			for rel in lex1.relations[tok]:
+				det += wgt(lex1,rel,tok)
+		for tok in lex2.relations:
+			for rel in lex2.relations[tok]:
+				det += wgt(lex2,rel,tok)
 		return num/det
-
-def totalRelations(graph) :
-		returN = 0
-		for tok in graph :
-			for lex in tok.relations :
-				for relKey in tok.relations[lex] :
-					returN += tok.relations[lex][relKey]
-		return returN
-
-def f(lex1 = None, rel = None, lex2 = None) :
-	returN = 0
-	if lex1 is not None :
-		if rel is None :
-			return lex1.nbRelation
-		else :
-			for key in lex1.relations :
-				return lex1.relations[lex2][rel]
-	else :
-		for key in lex2.relations :
-			if ((0 - rel) in lex2.relations[key]) :
-				returN += lex2.relations[key][(0 - rel)]
-	return returN
-
-def commomRelations(lex1, lex2):
-	returN = {}
-	for key in lex1.relations :
-		if ( key in lex2.relations ) :
-			for rKey in lex1.relations[key] :
-				if (rKey in lex2.relations[key]) :
-					returN[key] = rKey 
-	return returN
+		
+def commonRelations(lex1,lex2):
+	comRel = {}
+	for tok in lex1.relations:
+		if tok in lex2.relations:
+			comRel[tok] = set()
+			for rel in lex2.relations[tok]:
+				if rel in lex1.relations[tok]:
+					comRel[tok].add(rel)
+	return comRel
