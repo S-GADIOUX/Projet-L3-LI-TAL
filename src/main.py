@@ -24,7 +24,8 @@ def reapply(functionList, firstArg):
 fileManager.clean((sys.argv)[2])
 thesau = reapply(functions, (sys.argv)[1])
 
-nou = timeTest (thesau.classList, ['D'])
+nou = timeTest (thesau.classList, ['V','VPP']) 
+
 
 def testCode(thesau, nou):
 

@@ -1,5 +1,4 @@
-
-# coding: utf_8
+# -*- encoding: utf8 -*-
 def read(fileName) :
 	content = ""
 	with open( fileName, "r" ) as file :
@@ -13,5 +12,5 @@ def clean(fileName) :
 		file.write(content) 
 
 def write(fileName, string) :
-	with open( fileName, "a" ) as file :
-		file.write(string)
+    with open( fileName, "a" ) as file :
+        file.write(string+"\n")

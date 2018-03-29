@@ -1,5 +1,5 @@
 import math
-
+# -*- encoding: utf8 -*-
 class thesaurus :
 	
 	def __init__(self, graph):
@@ -11,7 +11,7 @@ class thesaurus :
 		for i in self.corpus:
 			tW += i.tokRelations
 		return tW
-	
+  
 	def classList(self, clasS):
 		returN = []
 		for i in self.corpus :
@@ -108,4 +108,3 @@ def commonRelations(lex1,lex2):
 				if rel in lex1.relations[tok]:
 					comRel[tok].add(rel)
 	return comRel
-
