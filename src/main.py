@@ -12,7 +12,7 @@ def timeTest( function, *parameters ) :
 	fileManager.write((sys.argv)[2], function.__name__ +' : '+ str(chrono) + ' s \n')
 	return returnValue
 
-functions = [fileManager.read, treeCreator.tokenList, treeCreator.relationList, treeCreator.graphList, thesaurus]
+functions = [fileManager.read, treeCreator.tokenList, treeCreator.relationList, treeCreator.graphList]#, thesaurus]
 
 def reapply(functionList, firstArg):
 	arg = firstArg
@@ -23,9 +23,11 @@ def reapply(functionList, firstArg):
 
 fileManager.clean((sys.argv)[2])
 thesau = reapply(functions, (sys.argv)[1])
-
+for i in thesau :
+    print(i)
+'''
 nou = timeTest (thesau.classList, ['V','VPP']) 
-
+'''
 
 def testCode(thesau, nou):
 
@@ -45,5 +47,6 @@ def testCode(thesau, nou):
 			f+=1
 			s=''
 	print("Real cost :" + str(f))
-
+'''
 timeTest(testCode, thesau, nou)
+'''

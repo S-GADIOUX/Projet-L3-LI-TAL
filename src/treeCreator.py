@@ -3,9 +3,9 @@ from token import token
 
 def spliter(line):	#Extraction du lexeme et du type d'une ligne
 	if (line==''):
-		return ('','')
+		return ('','',0,0)
 	array = line.split('\t')
-	return (array[2],array[4])
+	return (array[2],array[4], int(array[7]), int(array[0]))
 
 def tokenList(lines) :	#Creation de token non linked
 	"""
@@ -20,15 +20,17 @@ def tokenList(lines) :	#Creation de token non linked
 	
 	"""
 	tokenList = []
-	tokenList.append(token("STR","SPEC"))
+	tokenList.append((token("STR","SPEC"),None))
 	for i in lines:
-		lexeme, grammarClass = spliter(i)
+		lexeme, grammarClass, dValue, dPos = spliter(i) 
+		if (dPos == 0):
+			dValue = None
 		if (lexeme != ""):
-			tokenList.append(token(lexeme, grammarClass))
+			tokenList.append((token(lexeme, grammarClass), (dValue - dPos)))
 		else :
-			tokenList.append(token("END","SPEC"))
-			tokenList.append(token("STR","SPEC"))
-	tokenList.append(token("END","SPEC"))
+			tokenList.append((token("END","SPEC"),None))
+			tokenList.append((token("STR","SPEC"),None))
+	tokenList.append((token("END","SPEC"),None))
 	return tokenList
 
 
@@ -36,15 +38,21 @@ def relationList (lexemeList) :	#Creation de la liste de Token linké
 	i = 0
 	imax = len(lexemeList)
 	while (i < imax):
-		token = lexemeList[i]
-		#Calcul du noeud gauche
+		token, delta = lexemeList[i]
+		if delta is not None :
+			token.addRelation( lexemeList[i+delta][0], {-10 : 1})
+			lexemeList[i+delta][0].addRelation( token, {10 : 1})
+				#Calcul du noeud gauche
 		if ((token.lexeme != "STR")) :
-			token.addRelation( lexemeList[i-1], {-1 : 1 })
+			token.addRelation( lexemeList[i-1][0], {-1 : 1 })
 		#Calcul du noeud droit
 		if ((token.lexeme != "END")) :
-			token.addRelation(lexemeList[i+1], { 1 : 1 })
+			token.addRelation(lexemeList[i+1][0], { 1 : 1 })
 		i = i+1
-	return lexemeList
+	cleanedList=[]
+	for i in lexemeList:
+		cleanedList.append(i[0])
+	return cleanedList
 
 def graphList (relationList) :
 	graphList = {}

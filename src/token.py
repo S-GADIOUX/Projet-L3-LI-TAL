@@ -21,9 +21,9 @@ class token:
 	def generateHash(self):
 		hash = ord(self.lexeme[0])-97 +1
 		for i in self.lexeme:
-      hash = hash*100
-			hash += (ord(i)-97 % 26- +1
-			return hash	
+			hash = hash*100
+			hash += (ord(i)-97 % 26) +1
+		return hash	
 	
 	# construit l'ensemble des relations d'un token
 	def addRelation(self, token, rel):
@@ -47,7 +47,7 @@ class token:
 		for j in other.relations :
 
 			self.addRelation(j, other.relations[j])
-               
+			   
 	def __str__(self):
 		returN =' '+ self.lexeme + '\t'
 		if len(self.lexeme)<7:
