@@ -22,9 +22,15 @@ def reapply(functionList, firstArg):
 	return arg
 
 fileManager.clean((sys.argv)[2])
+fileManager.clean((sys.argv)[3])
+test = timeTest (treeCreator.ultime, (sys.argv)[1]) 
 thesau = reapply(functions, (sys.argv)[1])
+for i in test :
+	fileManager.write((sys.argv)[3],str(i))
+	
+fileManager.write((sys.argv)[3],'\n\n\n\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n\n\n\n')
 for i in thesau :
-    print(i)
+	fileManager.write((sys.argv)[3],str(i))
 '''
 nou = timeTest (thesau.classList, ['V','VPP']) 
 '''

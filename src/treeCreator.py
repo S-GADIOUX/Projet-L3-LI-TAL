@@ -1,6 +1,79 @@
 # -*- coding: utf-8 -*-
 from token import token
 
+def ultime(fileName) :
+	dict = {}
+	root = token('ROOT', 'STR',0)
+	dict[root] = root
+	sta = (token("STR","SPEC",0))
+	dict[sta] = sta
+	end = (token("END","SPEC",0))
+	dict[end] = end
+	with open( fileName, "r" ) as file :
+		buff = ''
+		toCheck = {}
+		end = False
+		switch = 0
+		pos = 1
+		line = {0 : token("STR","SPEC",0)}
+		char = file.read(1)
+		while char != '' :
+			if char == '\t' :
+				if switch == 2 :
+					line[pos] = [buff]
+				elif switch == 4:
+					line[pos].append(buff)
+				elif switch == 7:
+					line[pos].append(int(buff))
+				buff = ''
+				switch +=1
+				char = file.read(1)
+			elif char == '\n':
+				tok = token(line[pos][0],line[pos][1])
+				tok.addRelation(line[pos-1],{1 : 1 })
+				line[pos-1].addRelation(tok,{-1 : 1 })
+				if line[pos][2] in line :
+					if line[pos][2] == 0 :
+						tok.addRelation( root , {10 : 1 })
+						root.addRelation( tok , {10 : 1 })
+					else :
+						tok.addRelation( line[line[pos][2]] , {10 : 1 })
+						line[line[pos][2]].addRelation( tok , {10 : 1 })
+				else :
+					if line[pos][2] in toCheck :
+						toCheck[line[pos][2]].append(tok)
+					else :
+						toCheck[line[pos][2]] = [tok]
+				
+				if pos in toCheck :
+					for t in toCheck[pos] :
+						t.addRelation( tok , {10 : 1 })
+						tok.addRelation( t , {10 : 1 })
+				line[pos] = tok
+				char = file.read(1)
+				if char == '\n' :
+					tok = token("END","SPEC")
+					tok.addRelation(line[pos-1],{1 : 1 })
+					line[pos-1].addRelation(tok,{-1 : 1 })
+					dict[tok].merge(tok)
+					for t in line :
+						if line[t] in dict :
+							dict[line[t]].merge(line[t])
+						else :
+							dict[line[t]] = line[t]
+					pos = 0
+					line = {0 : token("STR","SPEC",0)}
+					toCheck = {}
+					char = file.read(1)
+
+				switch = 0
+				pos +=1
+				end = True
+			else :
+				buff+= char
+				char = file.read(1)
+	return dict
+
 def spliter(line):	#Extraction du lexeme et du type d'une ligne
 	if (line==''):
 		return ('','',0,0)
