@@ -1,36 +1,20 @@
 # -*- encoding: utf8 -*-
 import sys
-import time
 import fileManager
 import treeCreator
 from thesaurus import thesaurus
-
-def timeTest( function, *parameters ) :
-	start = time.perf_counter()
-	returnValue = function( *parameters )
-	chrono = time.perf_counter()-start
-	fileManager.write((sys.argv)[2], function.__name__ +' : '+ str(chrono) + ' s \n')
-	return returnValue
 
 functions = [fileManager.read, treeCreator.tokenList, treeCreator.relationList, treeCreator.graphList]#, thesaurus]
 
 def reapply(functionList, firstArg):
 	arg = firstArg
 	for i in functionList:
-		tmp = timeTest(i,arg)
+		tmp = i(arg)
 		arg = tmp
 	return arg
 
-fileManager.clean((sys.argv)[2])
-fileManager.clean((sys.argv)[3])
-test = timeTest (treeCreator.ultime, (sys.argv)[1]) 
+test = treeCreator.ultime ((sys.argv)[1])
 thesau = reapply(functions, (sys.argv)[1])
-for i in test :
-	fileManager.write((sys.argv)[3],str(i))
-	
-fileManager.write((sys.argv)[3],'\n\n\n\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n\n\n\n')
-for i in thesau :
-	fileManager.write((sys.argv)[3],str(i))
 '''
 nou = timeTest (thesau.classList, ['V','VPP']) 
 '''

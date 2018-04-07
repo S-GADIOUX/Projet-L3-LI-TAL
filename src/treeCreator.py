@@ -2,6 +2,10 @@
 from token import token
 
 def ultime(fileName) :
+	content = ""
+	with open(fileName, 'r') as file : 
+		content = file.read()
+	end = False
 	dict = {}
 	root = token('ROOT', 'STR',0)
 	dict[root] = root
@@ -9,26 +13,24 @@ def ultime(fileName) :
 	dict[sta] = sta
 	end = (token("END","SPEC",0))
 	dict[end] = end
-	with open( fileName, "r" ) as file :
-		buff = ''
-		toCheck = {}
-		end = False
-		switch = 0
-		pos = 1
-		line = {0 : token("STR","SPEC",0)}
-		char = file.read(1)
-		while char != '' :
-			if char == '\t' :
-				if switch == 2 :
-					line[pos] = [buff]
-				elif switch == 4:
-					line[pos].append(buff)
-				elif switch == 7:
-					line[pos].append(int(buff))
-				buff = ''
-				switch +=1
-				char = file.read(1)
-			elif char == '\n':
+	file = open( fileName, "r" )
+	buff = ''
+	toCheck = {}
+	switch = 0
+	pos = 1
+	line = {0 : token("STR","SPEC",0)}
+	for char in content:
+		if char == '\t' :
+			if switch == 2 :
+				line[pos] = [buff]
+			elif switch == 4:
+				line[pos].append(buff)
+			elif switch == 7:
+				line[pos].append(int(buff))
+			buff = ''
+			switch +=1
+		elif char == '\n':
+			if not end :
 				tok = token(line[pos][0],line[pos][1])
 				tok.addRelation(line[pos-1],{1 : 1 })
 				line[pos-1].addRelation(tok,{-1 : 1 })
@@ -44,34 +46,32 @@ def ultime(fileName) :
 						toCheck[line[pos][2]].append(tok)
 					else :
 						toCheck[line[pos][2]] = [tok]
-				
+			
 				if pos in toCheck :
 					for t in toCheck[pos] :
 						t.addRelation( tok , {10 : 1 })
 						tok.addRelation( t , {10 : 1 })
 				line[pos] = tok
-				char = file.read(1)
-				if char == '\n' :
-					tok = token("END","SPEC")
-					tok.addRelation(line[pos-1],{1 : 1 })
-					line[pos-1].addRelation(tok,{-1 : 1 })
-					dict[tok].merge(tok)
-					for t in line :
-						if line[t] in dict :
-							dict[line[t]].merge(line[t])
-						else :
-							dict[line[t]] = line[t]
-					pos = 0
-					line = {0 : token("STR","SPEC",0)}
-					toCheck = {}
-					char = file.read(1)
-
-				switch = 0
-				pos +=1
-				end = True
 			else :
-				buff+= char
-				char = file.read(1)
+				tok = token("END","SPEC")
+				tok.addRelation(line[pos-1],{1 : 1 })
+				line[pos-1].addRelation(tok,{-1 : 1 })
+				dict[tok].merge(tok)
+				for t in line :
+					if line[t] in dict :
+						dict[line[t]].merge(line[t])
+					else :
+						dict[line[t]] = line[t]
+				pos = 0
+				line = {0 : token("STR","SPEC",0)}
+				toCheck = {}
+			switch = 0
+			pos +=1
+			end = True
+		else :
+			buff+= char
+			end = False
+	file.close()
 	return dict
 
 def spliter(line):	#Extraction du lexeme et du type d'une ligne
@@ -79,6 +79,9 @@ def spliter(line):	#Extraction du lexeme et du type d'une ligne
 		return ('','',0,0)
 	array = line.split('\t')
 	return (array[2],array[4], int(array[7]), int(array[0]))
+
+def retry(lines):
+	return 0
 
 def tokenList(lines) :	#Creation de token non linked
 	"""
