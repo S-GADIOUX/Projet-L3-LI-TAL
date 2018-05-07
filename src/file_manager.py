@@ -3,7 +3,7 @@ def read(fileName) :
 	content = ""
 	with open( fileName, "r" ) as file :
 		content = file.read()
-	return(content.split('\n'))
+	return(content)
 
 def clean(fileName) :
 	content = ""

@@ -1,53 +1,29 @@
-# -*- coding: utf-8 -*-
-class token:
+#!/usr/bin/env python
+#-*- coding: utf-8 -*-
+
+class Token:
 	
-	def __init__(self, l, gc, o = None):
+	def __init__(self, l, gc, o = 1):
 		self.lexeme = l
 		self.grammarClass = gc
-		if o is None :
-			self.occurrence = 1
-		else :
-			self.occurrence = o
+		self.occurrence = o
 		self.relations = {}
 		self.tokRelations = 0
-		self.hashValue = self.generateHash()
 
 	def __eq__(self, other):
 		return self.lexeme == other.lexeme
-
-	def __hash__(self):
-		return self.hashValue
-
-	def generateHash(self):
-		hash = ord(self.lexeme[0])-97 +1
-		for i in self.lexeme:
-			hash = hash*100
-			hash += (ord(i)-97 % 26) +1
-		return hash	
 	
-	# construit l'ensemble des relations d'un token
-	def addRelation(self, token, rel):
-		if token in self.relations:
-			for key in rel:
-				# dictionnaire des relations entre self et token
-				dico = self.relations[token]
-				# dico[key] = dico.get(key,0) + rel[key]
-				if key in dico:
-					dico[key]+=rel[key]
-				else:
-					dico[key] = rel[key]
-				self.tokRelations += rel[key]
-		else:
-			self.relations[token] = rel
-			for key in rel:
-				self.tokRelations += rel[key]
+	def addRelation(self,rel):
+		self.relations[rel] = self.relations.get(rel,0) + 1
+		self.tokRelations += 1
 
-	def merge(self, other):
+	def merge(self,other):
 		self.occurrence += other.occurrence
-		for j in other.relations :
+		for key in other.relations:
+			self.relations[key] = self.relations.get(key,0) + other.relations[key]
+		self.tokRelations += other.tokRelations
 
-			self.addRelation(j, other.relations[j])
-			   
+
 	def __str__(self):
 		returN =' '+ self.lexeme + '\t'
 		if len(self.lexeme)<7:
@@ -55,22 +31,11 @@ class token:
 		returN +=str(self.occurrence) + '  ' + '  ' + '\t'
 		returN += self.grammarClass + '\t'
 		returN += '{ '
-		virg1 = False
+		virg = False
 		for i in self.relations:
-			virg2 = False
-			if virg1:
-				returN += ' , '
-			returN += i.lexeme + ":"
-			dico2 = '{'
-			for j in self.relations[i]:
-				if virg2:	
-					dico2 += ','
-				dico2 += str(j) + ": " + str(self.relations[i][j])
-				virg2 = True
-			dico2 += '}'
-			returN += dico2
-			virg1 = True
-			
+			if virg:
+				returN += ', '
+			returN += str(i) + ':' + str(self.relations[i])
+			virg = True
 		returN += " }"
 		return returN
-
