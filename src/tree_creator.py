@@ -7,7 +7,7 @@ def spliter(line):
 	if (line==''):
 		return ('','',0,0)
 	array = line.split('\t')
-	return ( array[2], array[3], array[0], array[7] )
+	return ( array[2], array[4], array[0], array[7] )
 
 #Ajout d'un token et de ses relations
 def nextWord(tokenList,lexeme,grammarClass,previous):

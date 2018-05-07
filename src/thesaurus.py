@@ -14,11 +14,12 @@ class thesaurus :
 			tW += self.corpus[i].tokRelations
 		return tW
 	
-	def classList(self, clasS):
+	def classList(self, clasS, occur = 1):
 		returN = []
 		for i in self.corpus :
 			if (self.corpus[i].grammarClass in clasS) :
-				returN.append(i)
+				if (self.corpus[i].occurrence >= occur) :
+					returN.append(i)
 		return returN
 
 	def f(self,lex1 = None,rel = None,lex2 = None):
