@@ -1,15 +1,15 @@
 # -*- encoding: utf8 -*-
-def read(fileName) :
+def read(file_name) :
 	content = ""
-	with open( fileName, "r" ) as file :
+	with open( file_name, "r" ) as file :
 		content = file.read()
 	return(content)
 
-def clean(fileName) :
+def clean(file_name) :
 	content = ""
-	with open( fileName, "w" ) as file :
+	with open( file_name, "w" ) as file :
 		file.write(content) 
 
-def write(fileName, string) :
-    with open( fileName, "a" ) as file :
+def write(file_name, string) :
+    with open( file_name, "a" ) as file :
         file.write(string+"\n")

@@ -1,25 +1,36 @@
 #-*- coding: utf-8 -*-
-
+from prioList import PrioList as _pl
 import math
 
 class thesaurus :
 	
 	def __init__(self, graph):
 		self.corpus = graph
-		self.thesWeight = self.thesRel()
+		self.thes_weight = self.thes_rel()
 
-	def thesRel(self):
+	def thes_rel(self):
 		tW=0
 		for i in self.corpus:
-			tW += self.corpus[i].tokRelations
+			tW += self.corpus[i].token_relations
 		return tW
 	
-	def classList(self, clasS, occur = 1):
+	def abs_class_list(self, clasS, occur = 1):
 		returN = []
-		for i in self.corpus :
-			if (self.corpus[i].grammarClass in clasS) :
-				if (self.corpus[i].occurrence >= occur) :
-					returN.append(i)
+		if rel_occur is None :
+		for t in self.corpus :
+			if (self.corpus[t].grammar_class in clasS) :
+				if (self.corpus[t].occurrence >= occur) :
+					returN.append(t)
+		return returN
+		
+	def rel_class_list(self, clasS, occur = 1):
+		returN = []
+		pList = _pl()
+		for t in self.corpus :
+			if (self.corpus[t].grammar_class in clasS) :
+					pList.put((self.corpus[t].occurrence,t))
+		for i in range(occur):
+			returN.append(pList.pop())
 		return returN
 
 	def f(self,lex1 = None,rel = None,lex2 = None):
@@ -31,20 +42,20 @@ class thesaurus :
 			return a
 		else :
 			if rel is None:
-				return self.corpus[lex1].tokRelations
+				return self.corpus[lex1].token_relations
 			return self.corpus[lex1].relations[(rel,lex2)]
 
 	def p(self,lex1,rel,lex2):
-		return self.f(lex1,rel,lex2)/self.thesWeigth
+		return self.f(lex1,rel,lex2)/self.thes_weigth
 
-	def relFreq(self, lex1, rel, lex2) :
-		return self.f(lex1,rel,lex2)/lex1.tokRelations
+	def relative_freq(self, lex1, rel, lex2) :
+		return self.f(lex1,rel,lex2)/lex1.token_relations
 
-	def tTest(self, lex1, rel, lex2) :
+	def t_test(self, lex1, rel, lex2) :
 		a = self.p(lex1,rel,lex2)
 		b = self.p(None,rel,lex2)
 		c = self.p(lex1)
-		return (a-b*c)/math.sqrt(a/self.thesWeigth)
+		return (a-b*c)/math.sqrt(a/self.thes_weigth)
 
 	def PMI(self, lex1, rel, lex2) :
 		num = self.f(lex1,rel,lex2)
@@ -56,7 +67,7 @@ class thesaurus :
 		num = 0
 		d1 = 0
 		d2 = 0
-		common = commonRelations(self.corpus[lex1],self.corpus[lex2])
+		common = common_relations(self.corpus[lex1],self.corpus[lex2])
 		for rel in common:
 			num += wgt(lex1,rel[0],rel[1])*wgt(lex2,rel[0],rel[1])
 		for rel in self.corpus[lex1].relations:
@@ -71,7 +82,7 @@ class thesaurus :
 	def jaccard(self,lex1,lex2,wgt):
 		num = 0
 		det = 0
-		common = commonRelations(self.corpus[lex1],self.corpus[lex2])
+		common = common_relations(self.corpus[lex1],self.corpus[lex2])
 		for rel in common:
 			l1 = wgt(lex1,rel[0],rel[1])
 			l2 = wgt(lex2,rel[0],rel[1])
@@ -86,7 +97,7 @@ class thesaurus :
 	def lin(self,lex1,lex2,wgt):
 		num = 0
 		det = 0
-		common = commonRelations(self.corpus[lex1],self.corpus[lex2])
+		common = common_relations(self.corpus[lex1],self.corpus[lex2])
 		for rel in common:
 			num += wgt(lex1,rel[0],rel[1])+wgt(lex2,rel[0],rel[1])
 		for rel in self.corpus[lex1].relations:
@@ -96,7 +107,7 @@ class thesaurus :
 		return num/det
 
 	def usable(self,gramType,prox,wgt):
-		lexTab = self.classList(gramType)
+		lexTab = self.abs_class_list(gramType)
 		result = {}
 		l = len(lexTab)
 		for i in range(l):
@@ -105,7 +116,7 @@ class thesaurus :
 				result[lexTab[i]][lexTab[j]] = prox(lexTab[i], lexTab[j], wgt)
 		return result
 
-def commonRelations(lex1,lex2):
+def common_relations(lex1,lex2):
 	comRel = []
 	for rel in lex1.relations:
 		if rel in lex2.relations:

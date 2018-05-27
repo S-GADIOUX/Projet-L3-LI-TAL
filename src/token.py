@@ -5,23 +5,23 @@ class Token:
 	
 	def __init__(self, l, gc, o = 1):
 		self.lexeme = l
-		self.grammarClass = gc
+		self.grammar_class = gc
 		self.occurrence = o
 		self.relations = {}
-		self.tokRelations = 0
+		self.token_relations = 0
 
 	def __eq__(self, other):
 		return self.lexeme == other.lexeme
 	
-	def addRelation(self,rel):
+	def add_relation(self,rel):
 		self.relations[rel] = self.relations.get(rel,0) + 1
-		self.tokRelations += 1
+		self.token_relations += 1
 
 	def merge(self,other):
 		self.occurrence += other.occurrence
 		for key in other.relations:
 			self.relations[key] = self.relations.get(key,0) + other.relations[key]
-		self.tokRelations += other.tokRelations
+		self.token_relations += other.token_relations
 
 
 	def __str__(self):
@@ -29,7 +29,7 @@ class Token:
 		if len(self.lexeme)<7:
 			returN += '\t'
 		returN +=str(self.occurrence) + '  ' + '  ' + '\t'
-		returN += self.grammarClass + '\t'
+		returN += self.grammar_class + '\t'
 		returN += '{ '
 		virg = False
 		for i in self.relations:
