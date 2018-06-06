@@ -26,7 +26,7 @@ def dep_word(graph, depW, govW):
 def clean(graph):
 	pass
 
-def token_list(corpus, limite) :	#Creation du thesaurus
+def token_list(corpus) :	#Creation du thesaurus
 	i = 0
 	graph = {}
 	graph["ROOT"] = Token("ROOT","SPEC",0)
@@ -53,9 +53,6 @@ def token_list(corpus, limite) :	#Creation du thesaurus
 			previous = "STR"
 			current_line =['ROOT']
 			gov_dep_rel = {}
-			if i<limite :
-				i = i-limite
-				clean(graph)
 	
 	next_word(graph,"END","SPEC",previous)
 	return graph

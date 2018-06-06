@@ -24,7 +24,10 @@ def doIt() :
 graph = doIt()
 thesau = thesaurus(graph)
 print('Processing the graph')
-noun_list = thesau.classList({'NC'},rel_occur = 100)
+noun_list = thesau.abs_class_list({'NC'},occur = 100)
 print('Nombre de nom ayants plus de 1000 occurences :',len(noun_list))
+
+print(thesau.usable({'NC'},thesau.cosine, thesau.PMI, 200))
+
 for i in noun_list :
 	print(i)

@@ -16,7 +16,6 @@ class thesaurus :
 	
 	def abs_class_list(self, clasS, occur = 1):
 		returN = []
-		if rel_occur is None :
 		for t in self.corpus :
 			if (self.corpus[t].grammar_class in clasS) :
 				if (self.corpus[t].occurrence >= occur) :
@@ -106,15 +105,18 @@ class thesaurus :
 			det += wgt(lex2,rel[0],rel[1])
 		return num/det
 
-	def usable(self,gramType,prox,wgt):
-		lexTab = self.abs_class_list(gramType)
+	def usable(self,gramType,prox,wgt, limit):
+		lexTab = self.rel_class_list(gramType, limit)
 		result = {}
 		l = len(lexTab)
+		print(prox)
 		for i in range(l):
+			print(lexTab[i])
 			result[lexTab[i]] = {}
 			for j in range(i+1,l):
 				result[lexTab[i]][lexTab[j]] = prox(lexTab[i], lexTab[j], wgt)
 		return result
+
 
 def common_relations(lex1,lex2):
 	comRel = []
