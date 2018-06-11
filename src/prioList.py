@@ -41,7 +41,7 @@ class PrioList :
 	'''
 	The manager class of the heap
 	'''
-	def __init__(self, heap = None):
+	def __init__(self, heap = SebHeap(None, [])):
 		self.heap = heap #The top heap
 
 	def empty(self):
@@ -60,7 +60,8 @@ class PrioList :
 		'''
 		Return the thing stored with the highest priority value
 		'''
-		self.add=0
+		if self.heap.empty() :
+			return None
 		to_ret = self.heap.head.thing
 		self.heap = _merge_pairs(self.heap.sub)
 		return to_ret
@@ -74,9 +75,9 @@ def _merge(prio1, prio2):
 	'''
 	Complexity of O(1)
 	'''
-	if prio1 is None or prio1.empty():
+	if prio1.empty():
 		return prio2
-	elif prio2 is None or prio2.empty() :
+	elif prio2.empty() :
 		return prio1
 	elif prio1.head.prio > prio2.head.prio : # Switch for min/max
 		prio1.sub.append(prio2) #Complexity of O(1)

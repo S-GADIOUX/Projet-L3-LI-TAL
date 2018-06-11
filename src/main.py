@@ -9,7 +9,7 @@ def splitter(content):
 	return content.split('\n')
 
 def load():
-	return [file_manager.read, splitter, tree_creator.token_list]#, thesaurus]
+	return [file_manager.read, splitter, tree_creator.token_list,thesaurus]
 
 def reapply(functionList, firstArg):
 	arg = firstArg
@@ -21,13 +21,7 @@ def reapply(functionList, firstArg):
 def doIt() :
 	return reapply(load(), (sys.argv)[1])
 
-graph = doIt()
-thesau = thesaurus(graph)
+thesau = doIt()
 print('Processing the graph')
-noun_list = thesau.abs_class_list({'NC'},occur = 100)
-print('Nombre de nom ayants plus de 1000 occurences :',len(noun_list))
 
-print(thesau.usable({'NC'},thesau.cosine, thesau.PMI, 200))
-
-for i in noun_list :
-	print(i)
+print(thesau.usable({'NC'},thesau.cosine, thesau.PMI, 'r', 200))

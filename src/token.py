@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 #-*- coding: utf-8 -*-
 
 class Token:
@@ -9,9 +8,14 @@ class Token:
 		self.occurrence = o
 		self.relations = {}
 		self.token_relations = 0
+		self.quick_relations = {}
 
 	def __eq__(self, other):
 		return self.lexeme == other.lexeme
+	
+	def generate_quick(self):
+		for rel in self.relations:
+			self.quick_relations[rel[0]] = self.quick_relations.get(rel[0],0) + self.relations[rel]
 	
 	def add_relation(self,rel):
 		self.relations[rel] = self.relations.get(rel,0) + 1

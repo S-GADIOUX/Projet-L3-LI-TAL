@@ -29,16 +29,15 @@ class thesaurus :
 			if (self.corpus[t].grammar_class in clasS) :
 					pList.put((self.corpus[t].occurrence,t))
 		for i in range(occur):
-			returN.append(pList.pop())
+			if pList.empty():
+				return returN
+			x = pList.pop()
+			returN.append(x)
 		return returN
 
 	def f(self,lex1 = None,rel = None,lex2 = None):
-		a = 0
 		if lex1 is None:
-			for key in self.corpus[lex2].relations:
-				if key[0] == -rel:
-					a += self.corpus[lex2].relations[key]
-			return a
+			return  self.corpus[lex2].quick_relations[0-rel]
 		else :
 			if rel is None:
 				return self.corpus[lex1].token_relations
@@ -105,16 +104,21 @@ class thesaurus :
 			det += wgt(lex2,rel[0],rel[1])
 		return num/det
 
-	def usable(self,gramType,prox,wgt, limit):
-		lexTab = self.rel_class_list(gramType, limit)
+	def usable(self,gramType,prox,wgt, style = 'a', limit=1):
+		if style == 'r':
+			lexTab = self.rel_class_list(gramType, limit)
+		else :
+			lexTab = self.abs_class_list(gramType, limit)
 		result = {}
 		l = len(lexTab)
-		print(prox)
 		for i in range(l):
-			print(lexTab[i])
 			result[lexTab[i]] = {}
+		for i in range(l):
 			for j in range(i+1,l):
-				result[lexTab[i]][lexTab[j]] = prox(lexTab[i], lexTab[j], wgt)
+				res = prox(lexTab[i], lexTab[j], wgt)
+				result[lexTab[i]][lexTab[j]] = res
+				
+				result[lexTab[j]][lexTab[i]] = res
 		return result
 
 

@@ -55,6 +55,10 @@ def token_list(corpus) :	#Creation du thesaurus
 			gov_dep_rel = {}
 	
 	next_word(graph,"END","SPEC",previous)
+	
+	for tok in graph :
+		graph[tok].generate_quick()
+	
 	return graph
 
 
