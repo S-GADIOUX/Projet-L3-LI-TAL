@@ -1,6 +1,6 @@
 #-*- coding: utf-8 -*-
 
-from token import Token
+from myToken import MyToken
 
 #Extraction du lexeme et du type d'une ligne
 def spliter(line):
@@ -11,7 +11,7 @@ def spliter(line):
 
 #Ajout d'un token et de ses relations
 def next_word(graph,lexeme,grammar_class,previous):
-	token = Token(lexeme,grammar_class)
+	token = MyToken(lexeme,grammar_class)
 	token.add_relation((1,previous))
 	graph[previous].add_relation((-1,lexeme))
 	if lexeme in graph:
@@ -29,9 +29,9 @@ def clean(graph):
 def token_list(corpus) :	#Creation du thesaurus
 	i = 0
 	graph = {}
-	graph["ROOT"] = Token("ROOT","SPEC",0)
-	graph["STR"] = Token("STR","SPEC")
-	graph["END"] = Token("END","SPEC",0)
+	graph["ROOT"] = MyToken("ROOT","SPEC",0)
+	graph["STR"] = MyToken("STR","SPEC")
+	graph["END"] = MyToken("END","SPEC",0)
 	previous = "STR"
 	current_line =['ROOT']
 	gov_dep_rel = {}

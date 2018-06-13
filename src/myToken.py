@@ -1,6 +1,5 @@
 #-*- coding: utf-8 -*-
-
-class Token:
+class MyToken:
 	
 	def __init__(self, l, gc, o = 1):
 		self.lexeme = l

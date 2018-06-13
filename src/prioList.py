@@ -48,7 +48,7 @@ class PrioList :
 		'''
 		Return true if the heap is empty
 		'''
-		return (self.heap is None)
+		return (self.heap.head is None)
 	
 	def put(self, tuple):
 		'''
