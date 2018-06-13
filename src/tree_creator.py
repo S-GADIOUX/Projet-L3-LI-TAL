@@ -23,11 +23,22 @@ def dep_word(graph, depW, govW):
 	graph[depW].add_relation((-10,govW))
 	graph[govW].add_relation((10,depW))
 
-def clean(graph):
-	pass
+def clean(graph, limit):
+	rm = set()
+	for t in graph :
+		if graph[t].occurrence < limit and t not in {'ROOT','STR','END'}:
+			for rel in graph[t].relations:
+				graph[rel[1]].delete_relation(t)
+			rm.add(t)
+	for l in rm :
+		graph.pop(l)
 
-def token_list(corpus) :	#Creation du thesaurus
-	i = 0
+
+def token_list(corpus, doom = 1000000) :	#Creation du thesaurus
+	z = 0
+	p = 1
+	a = len(corpus)
+	i = 0.0
 	graph = {}
 	graph["ROOT"] = MyToken("ROOT","SPEC",0)
 	graph["STR"] = MyToken("STR","SPEC")
@@ -36,6 +47,10 @@ def token_list(corpus) :	#Creation du thesaurus
 	current_line =['ROOT']
 	gov_dep_rel = {}
 	for line in corpus:
+		z +=1
+		if i/a*100 > p:
+			print(p,'%')
+			p+=1
 		lexeme, grammar_class, actual_pos, depend_pos  = spliter(line)
 		if (lexeme != ""):
 			i = i+1
@@ -53,6 +68,9 @@ def token_list(corpus) :	#Creation du thesaurus
 			previous = "STR"
 			current_line =['ROOT']
 			gov_dep_rel = {}
+			if z>doom :
+				z = 0
+				clean(graph, 10)
 	
 	next_word(graph,"END","SPEC",previous)
 	

@@ -17,8 +17,16 @@ class MyToken:
 			self.quick_relations[rel[0]] = self.quick_relations.get(rel[0],0) + self.relations[rel]
 	
 	def add_relation(self,rel):
+		if self.lexeme == rel[1]:
+			return
 		self.relations[rel] = self.relations.get(rel,0) + 1
 		self.token_relations += 1
+
+	def delete_relation(self,lex):
+		self.relations.pop((1,lex),None)
+		self.relations.pop((-1,lex),None)
+		self.relations.pop((10,lex),None)
+		self.relations.pop((-10,lex),None)
 
 	def merge(self,other):
 		self.occurrence += other.occurrence
