@@ -48,12 +48,13 @@ def token_list(corpus, doom = 1000000) :	#Creation du thesaurus
 	gov_dep_rel = {}
 	for line in corpus:
 		z +=1
+		i = i+1
 		if i/a*100 > p:
 			print(p,'%')
 			p+=1
 		lexeme, grammar_class, actual_pos, depend_pos  = spliter(line)
 		if (lexeme != ""):
-			i = i+1
+			
 			next_word(graph,lexeme,grammar_class,previous)
 			previous = lexeme
 			current_line.append(lexeme)

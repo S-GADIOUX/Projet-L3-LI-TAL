@@ -56,19 +56,24 @@ def correlation(theory, thesaurus):
 	master = sorted(list(equi))
 	i = 0
 	for s in master :
-		print('\n',s)
 		k =i
 		for r in equi[s]:
-			print(r)
 			inter_rank[0].append(k)
 			inter_rank[1].append(rank[r])
 			i+=1
 			
 	return (_np.corrcoef(inter_rank)[0][1], len(rel[0])/len(theory)*100)
 
+def thesau_to_string(dict):
+	s=''
+	for k in dict:
+		s+= (k+' :\n')
+		for m in dict[k]:
+			s+= ('\t'+m+'\t : '+str(dict[m][k])+'\n')
+	return s
 
 thesau = reapply(load_thesaurus(),(sys.argv)[1])
 print("Graph ready")
 print(correlation(generate_compare(splitter(file_manager.read((sys.argv)[2]))), thesau))
 print(len(thesau.corpus))
-#print(thesau.usable({'NC'},thesau.cosine, thesau.PMI, 'r', 200))
+print(thesau_to_string(thesau.usable({'NC'},thesau.cosine, thesau.PMI, 'r', 2000)))
