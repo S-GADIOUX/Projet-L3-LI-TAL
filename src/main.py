@@ -1,26 +1,22 @@
 # -*- encoding: utf8 -*-
 import numpy as _np
 import sys
-import cProfile as cp
+import argparse
 import file_manager
 import tree_creator
 from thesaurus import thesaurus
 
 
 def splitter(content):
+	'''
+	Extract lines of a file
+	'''
 	return content.split('\n')
 
-def load_thesaurus():
-	return [file_manager.read, splitter, tree_creator.token_list, thesaurus]
-
-def reapply(functionList, firstArg):
-	arg = firstArg
-	for i in functionList:
-		tmp = i(arg)
-		arg = tmp
-	return arg
-
 def generate_compare(content):
+	'''
+	Extact informartion from the comparaison file
+	'''
 	data = content.pop(0).split(' ')
 	returN=[]
 	min, max = int(data[0]),int(data[1])
@@ -29,13 +25,23 @@ def generate_compare(content):
 		returN.append((x1, x2, ((float(s) - min)/(max-min)) ))
 	return returN
 
-def correlation(theory, thesaurus):
+def correlation(theory, thesau):
+	'''
+	Calculate the correlation score between the theory and the thesaurus
+	'''
 	rel = [[],[]]
-	for t in theory :
-		if t[0] in thesaurus.corpus and t[1] in thesaurus.corpus :
-			rel[0].append(t[2])
-			rel[1].append(thesaurus.cosine(t[0], t[1], thesaurus.PMI))
 	
+	#Grab scores inside the thesaurus
+	for t in theory :
+		if t[0] in thesau and t[1] in thesau :
+			if t[0] == t[1]:
+				rel[0].append(t[2])
+				rel[1].append(1)
+			else :
+				rel[0].append(t[2])
+				rel[1].append(thesau[t[0]][t[1]])
+	
+	#Generate the equivalance between theoric scores and thesaurus scores
 	equi = {}
 	for s in range(len(rel[0])):
 		if rel[0][s] in equi :
@@ -45,6 +51,7 @@ def correlation(theory, thesaurus):
 	for k in equi:
 		equi[k] = sorted(equi[k])
 	
+	#Rank theoric scores
 	rank = {}
 	rel[1] = sorted(rel[1])
 	i = 0
@@ -52,6 +59,7 @@ def correlation(theory, thesaurus):
 		rank[s]=i
 		i+=1
 
+	#Rank thesaurus scores accordingly
 	inter_rank = [[],[]]
 	master = sorted(list(equi))
 	i = 0
@@ -69,11 +77,34 @@ def thesau_to_string(dict):
 	for k in dict:
 		s+= (k+' :\n')
 		for m in dict[k]:
-			s+= ('\t'+m+'\t : '+str(dict[m][k])+'\n')
+			s+= ('\t'+m+'\t: '+str(dict[m][k])+'\n')
 	return s
 
-thesau = reapply(load_thesaurus(),(sys.argv)[1])
-print("Graph ready")
-print(correlation(generate_compare(splitter(file_manager.read((sys.argv)[2]))), thesau))
-print(len(thesau.corpus))
-print(thesau_to_string(thesau.usable({'NC'},thesau.cosine, thesau.PMI, 'r', 2000)))
+def main():
+	parser = argparse.ArgumentParser()
+	parser.add_argument("data_file", help = 'A .outmalt data file')
+	parser.add_argument("-t", "--theory", default=None, help = 'A compare file in the correct format.')
+	parser.add_argument("-v", "--verbose", action = 'store_true', help = 'A compare file in the correct format.')
+	parser.add_argument("-l", "--limit", type = int, default=1000000, help = 'The number of lexemes proceed before cleaning the graph.')
+	parser.add_argument("-m", "--minimum_limit", type = int, default=20, help = 'The number of occurrences needed for not being deleted when cleaning.')
+	parser.add_argument("-w", "--write", default=None, help = 'The path to the file where thesaurus will be written.')
+	args = parser.parse_args(sys.argv[1:])
+	
+	content = splitter(file_manager.read(args.data_file))
+	thesau = thesaurus(tree_creator.token_list(content, args.limit, args.minimum_limit, args.verbose))
+	print("Graph has been generated. It has",len(thesau.corpus),"nodes inside.")
+	result = thesau.usable({'NC'},thesau.cosine, thesau.PMI, 'r', 1000)
+	print("The thesaurus has been generated.")
+	if args.theory is not None :
+		c, p = correlation(generate_compare(splitter(file_manager.read(args.theory))), result)
+		print("With a cover of",p,"%, there is a correlation score of",c)
+
+	if args.write :
+		with open(args.write,'w') as file :
+			file.write(thesau_to_string(result))
+	else :
+		print(thesau_to_string(result))
+	
+	
+if __name__ == "__main__":
+	main()
