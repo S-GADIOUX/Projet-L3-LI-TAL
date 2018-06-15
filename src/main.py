@@ -73,6 +73,7 @@ def correlation(theory, thesau):
 	return (_np.corrcoef(inter_rank)[0][1], len(rel[0])/len(theory)*100)
 
 def thesau_to_string(dict):
+	'''Turn a thesaurus into a string easier to read for a human.'''
 	s=''
 	for k in dict:
 		s+= (k+' :\n')
