@@ -2,6 +2,14 @@
 class MyToken:
 	
 	def __init__(self, l, gc, o = 1):
+		"""
+		lexeme = the lexem
+		grammar_class = the grammatical class
+		occurrence = the number of occurrences
+		relations = a dictionary of relations 
+		token_relations = the global number of relations
+		quick_relations = the number of relations for each relation type
+		"""
 		self.lexeme = l
 		self.grammar_class = gc
 		self.occurrence = o
@@ -11,29 +19,6 @@ class MyToken:
 
 	def __eq__(self, other):
 		return self.lexeme == other.lexeme
-	
-	def generate_quick(self):
-		for rel in self.relations:
-			self.quick_relations[rel[0]] = self.quick_relations.get(rel[0],0) + self.relations[rel]
-	
-	def add_relation(self,rel):
-		if self.lexeme == rel[1]:
-			return
-		self.relations[rel] = self.relations.get(rel,0) + 1
-		self.token_relations += 1
-
-	def delete_relation(self,lex):
-		self.relations.pop((1,lex),None)
-		self.relations.pop((-1,lex),None)
-		self.relations.pop((10,lex),None)
-		self.relations.pop((-10,lex),None)
-
-	def merge(self,other):
-		self.occurrence += other.occurrence
-		for key in other.relations:
-			self.relations[key] = self.relations.get(key,0) + other.relations[key]
-		self.token_relations += other.token_relations
-
 
 	def __str__(self):
 		returN =' '+ self.lexeme + '\t'
@@ -50,3 +35,37 @@ class MyToken:
 			virg = True
 		returN += " }"
 		return returN
+
+	def generate_quick(self):
+		'''
+		Generate the quick relation count reference for the f function.
+		'''
+		for rel in self.relations:
+			self.quick_relations[rel[0]] = self.quick_relations.get(rel[0],0) + self.relations[rel]
+	
+	def add_relation(self,rel):
+		'''
+		Add or update a relation
+		'''
+		if self.lexeme == rel[1]:
+			return
+		self.relations[rel] = self.relations.get(rel,0) + 1
+		self.token_relations += 1
+
+	def delete_relation(self,lex):
+		'''
+		Delete all relations with a lexeme
+		'''
+		self.relations.pop((1,lex),None)
+		self.relations.pop((-1,lex),None)
+		self.relations.pop((10,lex),None)
+		self.relations.pop((-10,lex),None)
+
+	def merge(self,other):
+		'''
+		Merge a other token into this token
+		'''
+		self.occurrence += other.occurrence
+		for key in other.relations:
+			self.relations[key] = self.relations.get(key,0) + other.relations[key]
+		self.token_relations += other.token_relations

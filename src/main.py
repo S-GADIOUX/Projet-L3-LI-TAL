@@ -82,20 +82,35 @@ def thesau_to_string(dict):
 	return s
 
 def main():
+	'''
+	Main function including :
+	 - Arg parser Generation
+	 - Graph Generation
+	 - Thesaurus Generation
+	 - Optionnal thesaurus test
+	 - Writting Thesaurus
+	'''
 	parser = argparse.ArgumentParser()
 	parser.add_argument("data_file", help = 'A .outmalt data file')
 	parser.add_argument("-t", "--theory", default=None, help = 'A compare file in the correct format.')
-	parser.add_argument("-v", "--verbose", action = 'store_true', help = 'A compare file in the correct format.')
+	parser.add_argument("--thesaurus", type = int, default=1000, help = 'The size of the thesaurus.')
+	parser.add_argument("--absolute", action = 'store_true', help = 'Use absolute mode.')
+	parser.add_argument("-v", "--verbose", action = 'store_true', help = 'Activate maximum detail mode.')
 	parser.add_argument("-l", "--limit", type = int, default=1000000, help = 'The number of lexemes proceed before cleaning the graph.')
-	parser.add_argument("-m", "--minimum_limit", type = int, default=20, help = 'The number of occurrences needed for not being deleted when cleaning.')
+	parser.add_argument("-m", "--minimum_limit", type = int, default=10, help = 'The number of occurrences needed for not being deleted when cleaning.')
 	parser.add_argument("-w", "--write", default=None, help = 'The path to the file where thesaurus will be written.')
 	args = parser.parse_args(sys.argv[1:])
-	
+
 	content = splitter(file_manager.read(args.data_file))
 	thesau = thesaurus(tree_creator.token_list(content, args.limit, args.minimum_limit, args.verbose))
 	print("Graph has been generated. It has",len(thesau.corpus),"nodes inside.")
-	result = thesau.usable({'NC'},thesau.cosine, thesau.PMI, 'r', 1000)
+
+	mode = 'r'
+	if args.absolute :
+		mode = 'a'
+	result = thesau.usable({'NC'},thesau.cosine, thesau.PMI, mode, args.thesaurus)
 	print("The thesaurus has been generated.")
+
 	if args.theory is not None :
 		c, p = correlation(generate_compare(splitter(file_manager.read(args.theory))), result)
 		print("With a cover of",p,"%, there is a correlation score of",c)
@@ -105,7 +120,6 @@ def main():
 			file.write(thesau_to_string(result))
 	else :
 		print(thesau_to_string(result))
-	
 	
 if __name__ == "__main__":
 	main()

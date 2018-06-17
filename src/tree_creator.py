@@ -33,8 +33,9 @@ def dep_word(graph, depW, govW):
 	graph[depW].add_relation((-10,govW))
 	graph[govW].add_relation((10,depW))
 
-def clean(graph, limit):
+def clean(graph, limit, verbose = False):
 	'''Remove relations which do not have at least limit occurences in the graph'''
+	x = len(graph)
 	rm = set()
 	for t in graph :
 		if graph[t].occurrence < limit and t not in {'ROOT','STR','END'}:
@@ -43,6 +44,9 @@ def clean(graph, limit):
 			rm.add(t)
 	for l in rm :
 		graph.pop(l)
+	if verbose :
+		d = (1-(len(graph)/x))*100
+		print(d,'% of the graph was deleted')
 
 
 def token_list(corpus, doom = 1000000, limit = 10, verbose = False) :	#Creation du thesaurus
@@ -96,9 +100,9 @@ def token_list(corpus, doom = 1000000, limit = 10, verbose = False) :	#Creation 
 			gov_dep_rel = {}
 			if z>doom :
 				z = 0
-				clean(graph, limit)
+				clean(graph, limit, verbose)
 	
-	clean(graph, limit)
+	clean(graph, limit, verbose)
 	next_word(graph,"END","SPEC",previous)
 	
 	#Generate quick dicstionnary for f function in thesau
