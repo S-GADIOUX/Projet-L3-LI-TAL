@@ -57,7 +57,7 @@ class MyToken:
 		Delete all relations with a lexeme
 		'''
 		for i in {1,-1,10,-10} :
-			x = self.relations.pop((1,lex),None)
+			x = self.relations.pop((i,lex),None)
 			if x is not None :
 				self.token_relations -= x
 		
