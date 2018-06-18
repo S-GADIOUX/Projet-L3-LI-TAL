@@ -101,11 +101,9 @@ def token_list(corpus, doom = 1000000, limit = 10, verbose = False) :	#Creation 
 			if z>doom :
 				z = 0
 				clean(graph, limit, verbose)
-	
-	clean(graph, limit, verbose)
 	next_word(graph,"END","SPEC",previous)
-	
-	#Generate quick dicstionnary for f function in thesau
+	clean(graph, limit, verbose)
+	#Generate quick dictionnary for f function in thesau
 	for tok in graph :
 		graph[tok].generate_quick()
 	

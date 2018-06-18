@@ -130,6 +130,9 @@ class thesaurus :
 			det += wgt(lex2,rel[0],rel[1])
 		return num/det
 
+	'''
+	Main function
+	'''
 	def usable(self,gramType,prox,wgt, style = 'a', limit=1, verbose = False):
 		'''
 		Generate and return the thesaurus.
