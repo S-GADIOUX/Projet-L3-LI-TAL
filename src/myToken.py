@@ -56,10 +56,11 @@ class MyToken:
 		'''
 		Delete all relations with a lexeme
 		'''
-		self.relations.pop((1,lex),None)
-		self.relations.pop((-1,lex),None)
-		self.relations.pop((10,lex),None)
-		self.relations.pop((-10,lex),None)
+		for i in {1,-1,10,-10} :
+			x = self.relations.pop((1,lex),None)
+			if x is not None :
+				self.token_relations -= x
+		
 
 	def merge(self,other):
 		'''

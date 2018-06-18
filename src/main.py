@@ -4,6 +4,7 @@ import sys
 import argparse
 import file_manager
 import tree_creator
+from correlation import correlation
 from thesaurus import thesaurus
 
 
@@ -24,53 +25,6 @@ def generate_compare(content):
 		x1,x2,s = content.pop().split(' ')
 		returN.append((x1, x2, ((float(s) - min)/(max-min)) ))
 	return returN
-
-def correlation(theory, thesau):
-	'''
-	Calculate the correlation score between the theory and the thesaurus
-	'''
-	rel = [[],[]]
-	
-	#Grab scores inside the thesaurus
-	for t in theory :
-		if t[0] in thesau and t[1] in thesau :
-			if t[0] == t[1]:
-				rel[0].append(t[2])
-				rel[1].append(1)
-			else :
-				rel[0].append(t[2])
-				rel[1].append(thesau[t[0]][t[1]])
-	
-	#Generate the equivalance between theoric scores and thesaurus scores
-	equi = {}
-	for s in range(len(rel[0])):
-		if rel[0][s] in equi :
-			equi[rel[0][s]].append(rel[1][s])
-		else :
-			equi[rel[0][s]] = [rel[1][s]]
-	for k in equi:
-		equi[k] = sorted(equi[k])
-	
-	#Rank theoric scores
-	rank = {}
-	rel[1] = sorted(rel[1])
-	i = 0
-	for s in rel[1]:
-		rank[s]=i
-		i+=1
-
-	#Rank thesaurus scores accordingly
-	inter_rank = [[],[]]
-	master = sorted(list(equi))
-	i = 0
-	for s in master :
-		k =i
-		for r in equi[s]:
-			inter_rank[0].append(k)
-			inter_rank[1].append(rank[r])
-			i+=1
-			
-	return (_np.corrcoef(inter_rank)[0][1], len(rel[0])/len(theory)*100)
 
 def thesau_to_string(dict):
 	'''Turn a thesaurus into a string easier to read for a human.'''
@@ -108,7 +62,7 @@ def main():
 	mode = 'r'
 	if args.absolute :
 		mode = 'a'
-	result = thesau.usable({'NC'},thesau.cosine, thesau.PMI, mode, args.thesaurus)
+	result = thesau.usable({'NC'},thesau.cosine, thesau.PMI, mode, args.thesaurus, args.verbose)
 	print("The thesaurus has been generated.")
 
 	if args.theory is not None :
