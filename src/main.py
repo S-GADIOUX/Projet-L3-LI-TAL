@@ -1,5 +1,6 @@
 # -*- encoding: utf8 -*-
 import numpy as _np
+import json
 import sys
 import argparse
 import file_manager
@@ -25,15 +26,6 @@ def generate_compare(content):
 		x1,x2,s = content.pop().split(' ')
 		returN.append((x1, x2, ((float(s) - min)/(max-min)) ))
 	return returN
-
-def thesau_to_string(dict):
-	'''Turn a thesaurus into a string easier to read for a human.'''
-	s=''
-	for k in dict:
-		s+= (k+' :\n')
-		for m in dict[k]:
-			s+= ('\t'+m+'\t: '+str(dict[m][k])+'\n')
-	return s
 
 def main():
 	'''
@@ -71,9 +63,9 @@ def main():
 
 	if args.write :
 		with open(args.write,'w') as file :
-			file.write(thesau_to_string(result))
+			json.dump(result,file)
 	else :
-		print(thesau_to_string(result))
+		print(result)
 	
 if __name__ == "__main__":
 	main()
