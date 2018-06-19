@@ -1,3 +1,5 @@
+import numpy as _np
+
 def correlation(theory, thesau):
 	'''
 	Calculate the correlation score between the theory and the thesaurus
